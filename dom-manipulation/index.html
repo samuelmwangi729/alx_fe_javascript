@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dynamic Quote Generator</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 2rem;
+            text-align: center;
+        }
+        
+        #quoteDisplay {
+            margin: 20px 0;
+            font-size: 1.5rem;
+            font-style: italic;
+            min-height: 60px;
+        }
+        
+        .category {
+            font-weight: bold;
+            color: #0077cc;
+        }
+        
+        input {
+            margin: 5px;
+            padding: 8px;
+        }
+        
+        button {
+            margin: 5px;
+            padding: 10px 15px;
+            cursor: pointer;
+            border: none;
+            border-radius: 5px;
+            background: #0077cc;
+            color: white;
+        }
+        
+        button:hover {
+            background: #005fa3;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Dynamic Quote Generator</h1>
+
+    <div id="quoteDisplay">Click "Show New Quote" to start!</div>
+    <button id="newQuote">Show New Quote</button>
+
+    <h2>Add Your Own Quote</h2>
+    <div>
+        <input id="newQuoteText" type="text" placeholder="Enter a new quote" />
+        <input id="newQuoteCategory" type="text" placeholder="Enter quote category" />
+        <button id="addQuote">Add Quote</button>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+
+</html>
