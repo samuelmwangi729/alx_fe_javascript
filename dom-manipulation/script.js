@@ -1,61 +1,66 @@
-// Array of quotes with text + category
-let quotes = [
-    { text: "The best way to get started is to quit talking and begin doing.", category: "Motivation" },
-    { text: "Life is what happens when you're busy making other plans.", category: "Life" },
-    { text: "Your limitation—it’s only your imagination.", category: "Inspiration" }
-];
-
-const quoteDisplay = document.getElementById("quoteDisplay");
-const newQuoteBtn = document.getElementById("newQuote");
-const addQuoteBtn = document.getElementById("addQuote");
-
-// Function to display a random quote
-function showRandomQuote() {
-    if (quotes.length === 0) {
-        quoteDisplay.textContent = "No quotes available.";
-        return;
-    }
-    const randomIndex = Math.floor(Math.random() * quotes.length);
-    const quote = quotes[randomIndex];
-
-    // Clear and build the DOM dynamically
-    quoteDisplay.innerHTML = "";
-
-    const quoteText = document.createElement("p");
-    quoteText.textContent = `"${quote.text}"`;
-
-    const quoteCategory = document.createElement("span");
-    quoteCategory.classList.add("category");
-    quoteCategory.textContent = ` — ${quote.category}`;
-
-    quoteText.appendChild(quoteCategory);
-    quoteDisplay.appendChild(quoteText);
-}
-
-// Function to add a new quote
-function addQuote() {
-    const newText = document.getElementById("newQuoteText").value.trim();
-    const newCategory = document.getElementById("newQuoteCategory").value.trim();
-
-    if (!newText || !newCategory) {
-        alert("Please fill in both fields!");
+// Function to create and append the Add Quote form
+function createAddQuoteForm() {
+    const formContainer = document.getElementById("form-container");
+    if (!formContainer) {
+        console.error("No container found with id 'form-container'");
         return;
     }
 
-    // Add to array
-    quotes.push({ text: newText, category: newCategory });
+    // Clear any existing form
+    formContainer.innerHTML = "";
 
-    // Update UI dynamically
-    const confirmation = document.createElement("p");
-    confirmation.style.color = "green";
-    confirmation.textContent = `New quote added in '${newCategory}' category!`;
-    document.body.appendChild(confirmation);
+    // Create form element
+    const form = document.createElement("form");
+    form.id = "add-quote-form";
 
-    // Clear inputs
-    document.getElementById("newQuoteText").value = "";
-    document.getElementById("newQuoteCategory").value = "";
+    // Quote text input
+    const quoteLabel = document.createElement("label");
+    quoteLabel.innerText = "Quote:";
+    const quoteInput = document.createElement("input");
+    quoteInput.type = "text";
+    quoteInput.name = "quote";
+    quoteInput.required = true;
+
+    // Author input
+    const authorLabel = document.createElement("label");
+    authorLabel.innerText = "Author:";
+    const authorInput = document.createElement("input");
+    authorInput.type = "text";
+    authorInput.name = "author";
+    authorInput.required = true;
+
+    // Submit button
+    const submitButton = document.createElement("button");
+    submitButton.type = "submit";
+    submitButton.innerText = "Add Quote";
+
+    // Append elements to form
+    form.appendChild(quoteLabel);
+    form.appendChild(quoteInput);
+    form.appendChild(document.createElement("br"));
+    form.appendChild(authorLabel);
+    form.appendChild(authorInput);
+    form.appendChild(document.createElement("br"));
+    form.appendChild(submitButton);
+
+    // Append form to container
+    formContainer.appendChild(form);
+
+    // Handle form submission
+    form.addEventListener("submit", function (e) {
+        e.preventDefault();
+        const newQuote = {
+            quote: quoteInput.value,
+            author: authorInput.value,
+        };
+
+        console.log("New Quote Added:", newQuote);
+        alert("Quote added successfully!");
+        form.reset();
+    });
 }
 
-// Event listeners
-newQuoteBtn.addEventListener("click", showRandomQuote);
-addQuoteBtn.addEventListener("click", addQuote);
+// Example: automatically create form on page load
+document.addEventListener("DOMContentLoaded", () => {
+    createAddQuoteForm();
+});
