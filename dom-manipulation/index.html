@@ -4,78 +4,27 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Dynamic Quote Generator</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      background: #f4f4f9;
-      margin: 0;
-      padding: 20px;
-    }
-    .container {
-      max-width: 600px;
-      margin: auto;
-      background: #fff;
-      padding: 20px;
-      border-radius: 12px;
-      box-shadow: 0px 4px 10px rgba(0,0,0,0.1);
-    }
-    h1 {
-      text-align: center;
-      color: #333;
-    }
-    .quote-box {
-      margin: 20px 0;
-      padding: 15px;
-      border-left: 5px solid #007BFF;
-      background: #f9f9ff;
-      border-radius: 8px;
-      min-height: 80px;
-    }
-    .quote-text {
-      font-size: 18px;
-      font-style: italic;
-      color: #444;
-    }
-    .author {
-      text-align: right;
-      font-size: 16px;
-      margin-top: 10px;
-      color: #666;
-    }
-    button {
-      padding: 10px 16px;
-      margin: 5px;
-      border: none;
-      border-radius: 6px;
-      cursor: pointer;
-      background: #007BFF;
-      color: #fff;
-      font-size: 14px;
-    }
-    button:hover {
-      background: #0056b3;
-    }
-    .notification {
-      margin-top: 15px;
-      padding: 10px;
-      border-radius: 6px;
-      background: #ffefc4;
-      border: 1px solid #e2c97f;
-      color: #5f4c14;
-      display: none;
-    }
-  </style>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
   <div class="container">
     <h1>Dynamic Quote Generator</h1>
-    <div class="quote-box">
-      <div id="quote" class="quote-text">Loading...</div>
-      <div id="author" class="author"></div>
+
+    <div id="quote-display">
+      <p id="quote-text">Click below to load a quote!</p>
+      <p id="quote-author"></p>
     </div>
-    <button onclick="getNewQuote()">New Quote</button>
-    <button onclick="syncWithServer()">Sync with Server</button>
-    <div id="notification" class="notification"></div>
+
+    <button id="new-quote">Get New Quote</button>
+
+    <h2>Add a New Quote</h2>
+    <form id="add-quote-form">
+      <input type="text" id="quote-input" placeholder="Enter quote" required>
+      <input type="text" id="author-input" placeholder="Enter author" required>
+      <button type="submit">Add Quote</button>
+    </form>
+
+    <div id="notifications"></div>
   </div>
 
   <script src="script.js"></script>
