@@ -1,42 +1,32 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Dynamic Quote Generator</title>
-  <style>
-    body { font-family: system-ui, -apple-system, "Segoe UI", Roboto, Arial; padding: 2rem; max-width: 900px; margin: auto; }
-    #quoteDisplay { margin: 20px 0; font-size: 1.3rem; font-style: italic; min-height: 60px; border-left: 4px solid #0077cc; padding-left: 12px; }
-    .category { font-weight: bold; color: #0077cc; margin-left: 8px; font-style: normal; }
-    .controls { margin: 12px 0; }
-    input[type="text"] { padding: 8px; width: 220px; margin-right: 8px; }
-    button { padding: 8px 12px; border-radius: 6px; border: none; background: #0077cc; color: #fff; cursor: pointer; margin-right: 8px; }
-    button.secondary { background: #555; }
-    #form-container { margin-top: 12px; }
-    #lastViewed { margin-top: 10px; font-size: 0.95rem; color: #333; }
-    small.note { color: #666; display:block; margin-top:6px; }
-    .msg { color: green; margin-top: 8px; }
-  </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dynamic Quote Generator with Filtering</title>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
   <h1>Dynamic Quote Generator</h1>
 
-  <div id="quoteDisplay">Click "Show New Quote" to start!</div>
+  <!-- Category Filter -->
+  <label for="categoryFilter">Filter by Category:</label>
+  <select id="categoryFilter" onchange="filterQuotes()">
+    <option value="all">All Categories</option>
+    <!-- Dynamically populated -->
+  </select>
 
-  <div class="controls">
-    <button id="newQuote">Show New Quote</button>
-    <button id="exportQuotes" class="secondary">Export Quotes (JSON)</button>
-    <!-- File input for importing JSON -->
-    <input type="file" id="importFile" accept=".json" />
-  </div>
+  <!-- Quote Display -->
+  <div id="quoteDisplay"></div>
 
-  <div id="lastViewed"></div>
-
-  <h2>Add Your Own Quote</h2>
-  <!-- Dynamic form will be created here by createAddQuoteForm() -->
-  <div id="form-container"></div>
-
-  <small class="note">Notes: Local storage persists your quotes across browser sessions. Session storage keeps the last viewed quote for the current tab.</small>
+  <!-- Add Quote Form -->
+  <h2>Add a New Quote</h2>
+  <form id="addQuoteForm" onsubmit="addQuote(event)">
+    <input type="text" id="quoteText" placeholder="Enter quote" required>
+    <input type="text" id="quoteAuthor" placeholder="Enter author" required>
+    <input type="text" id="quoteCategory" placeholder="Enter category" required>
+    <button type="submit">Add Quote</button>
+  </form>
 
   <script src="script.js"></script>
 </body>
