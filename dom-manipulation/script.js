@@ -1,60 +1,126 @@
-let localQuotes = JSON.parse(localStorage.getItem("quotes")) || [];
-let currentQuote = null;
-const apiURL = "https://jsonplaceholder.typicode.com/posts"; // Fake API for simulation
+// Local storage key
+const STORAGE_KEY = "quotes";
 
-// Fetch a random quote
-function getNewQuote() {
-  if (localQuotes.length === 0) {
-    document.getElementById("quote").innerText = "No quotes available. Please sync.";
-    document.getElementById("author").innerText = "";
-    return;
-  }
-  const randomIndex = Math.floor(Math.random() * localQuotes.length);
-  currentQuote = localQuotes[randomIndex];
-  document.getElementById("quote").innerText = `"${currentQuote.text}"`;
-  document.getElementById("author").innerText = `- ${currentQuote.author}`;
-}
+// UI elements
+const quoteText = document.getElementById("quote-text");
+const quoteAuthor = document.getElementById("quote-author");
+const newQuoteBtn = document.getElementById("new-quote");
+const addQuoteForm = document.getElementById("add-quote-form");
+const notifications = document.getElementById("notifications");
 
-// Sync with the server
-async function syncWithServer() {
+// ✅ Step 1: Simulate Server Interaction
+const SERVER_URL = "https://jsonplaceholder.typicode.com/posts"; // Mock API
+
+// Fetch quotes from server
+async function fetchQuotesFromServer() {
   try {
-    // Fetch server data
-    const response = await fetch(apiURL);
-    const serverData = await response.json();
+    const response = await fetch(SERVER_URL);
+    const data = await response.json();
 
-    // Simulate server returning quotes
-    const serverQuotes = serverData.slice(0, 5).map(post => ({
-      text: post.title,
-      author: "Server"
+    // Simulate server having quotes
+    const serverQuotes = data.slice(0, 5).map(item => ({
+      text: item.title,
+      author: `User ${item.userId}`
     }));
 
-    // Conflict resolution: server data overwrites local data
-    localQuotes = [...serverQuotes];
-    localStorage.setItem("quotes", JSON.stringify(localQuotes));
-
-    showNotification("Data synced with server. Server data replaced local data.");
-    getNewQuote();
+    syncWithServer(serverQuotes);
   } catch (error) {
-    console.error("Sync failed:", error);
-    showNotification("Error syncing with server. Please try again.");
+    console.error("Error fetching quotes from server:", error);
   }
 }
 
-// Show notification to user
+// Post a new quote to server
+async function postQuoteToServer(quote) {
+  try {
+    await fetch(SERVER_URL, {
+      method: "POST",
+      body: JSON.stringify(quote),
+      headers: {
+        "Content-type": "application/json; charset=UTF-8"
+      }
+    });
+  } catch (error) {
+    console.error("Error posting quote:", error);
+  }
+}
+
+// ✅ Step 2: Implement Data Syncing
+function getLocalQuotes() {
+  return JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
+}
+
+function saveLocalQuotes(quotes) {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(quotes));
+}
+
+// Sync local with server (server wins if conflict)
+function syncWithServer(serverQuotes) {
+  let localQuotes = getLocalQuotes();
+
+  // Simple conflict resolution → server data takes precedence
+  serverQuotes.forEach(serverQuote => {
+    const exists = localQuotes.find(
+      q => q.text === serverQuote.text && q.author === serverQuote.author
+    );
+    if (!exists) {
+      localQuotes.push(serverQuote);
+      showNotification("New quotes synced from server.");
+    }
+  });
+
+  saveLocalQuotes(localQuotes);
+}
+
+// ✅ Step 3: Conflict Resolution UI
 function showNotification(message) {
-  const notification = document.getElementById("notification");
-  notification.innerText = message;
-  notification.style.display = "block";
+  const note = document.createElement("p");
+  note.textContent = message;
+  note.className = "notification";
+  notifications.appendChild(note);
+
   setTimeout(() => {
-    notification.style.display = "none";
+    notifications.removeChild(note);
   }, 4000);
 }
 
-// Initialize
-document.addEventListener("DOMContentLoaded", () => {
-  if (localQuotes.length === 0) {
-    syncWithServer();
-  } else {
-    getNewQuote();
+// ✅ Step 4: Quote Display
+function displayRandomQuote() {
+  const quotes = getLocalQuotes();
+  if (quotes.length === 0) {
+    quoteText.textContent = "No quotes available.";
+    quoteAuthor.textContent = "";
+    return;
   }
+  const random = quotes[Math.floor(Math.random() * quotes.length)];
+  quoteText.textContent = random.text;
+  quoteAuthor.textContent = `- ${random.author}`;
+}
+
+// Event listeners
+newQuoteBtn.addEventListener("click", displayRandomQuote);
+
+addQuoteForm.addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const text = document.getElementById("quote-input").value.trim();
+  const author = document.getElementById("author-input").value.trim();
+
+  if (!text || !author) return;
+
+  const newQuote = { text, author };
+  let quotes = getLocalQuotes();
+  quotes.push(newQuote);
+  saveLocalQuotes(quotes);
+
+  // Sync to server
+  await postQuoteToServer(newQuote);
+  showNotification("New quote added and synced with server.");
+
+  addQuoteForm.reset();
 });
+
+// Periodic server sync every 15s
+setInterval(fetchQuotesFromServer, 15000);
+
+// Initial load
+fetchQuotesFromServer();
+displayRandomQuote();
